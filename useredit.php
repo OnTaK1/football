@@ -2,67 +2,26 @@
 session_start();
 require ('database.php');
 
-function getTeams(): array
-{
-    global $db;
+$id = $_SESSION['id'];
 
-    $teams = [];
-
-    $query = mysqli_query($db, "SELECT * FROM team");
-    for ($i=0; $i<mysqli_num_rows($query); $i++) {
-        $teams[] = mysqli_fetch_assoc($query);
-    }
-
-    return $teams;
-};
-function getStad(): array
-{
-    global $db;
-
-    $stadium = [];
-
-    $query = mysqli_query($db, "SELECT * FROM stadium");
-    for ($i=0; $i<mysqli_num_rows($query); $i++) {
-        $stadium[] = mysqli_fetch_assoc($query);
-    }
-
-    return $stadium;
-}
-?>
-<?php
-require ('database.php');
 if (count($_POST) > 0) {
     updateMatch();
 }
-function getMatchById(): void
-{
-    global $db;
-    $id = htmlspecialchars(addslashes($_GET['id']));
-    if (!empty($id)) {
-        $result = mysqli_query($db, "SELECT * FROM matches WHERE id = " . $id);
-        if((mysqli_num_rows($result)) > 0) {
-            $match = mysqli_fetch_assoc($result);
-        } else {
-            die ("Матч не найден");
-        }
 
-
-    }  else {
-        die('Не задан id матча');
-    }
-
-}
 function updateMatch():void {
     global $id;
     global $db;
-    $stad= htmlspecialchars(addslashes($_GET['stad']));
-    $teaml= htmlspecialchars(addslashes($_GET['team1']));
-    $teamll= htmlspecialchars(addslashes($_GET['team2']));
-    $cost = htmlspecialchars(addslashes($_GET['cost']));
-    $date = htmlspecialchars(addslashes($_GET['date']));
-    if(!empty($stad) && !empty ($teaml) && !empty($teamll) && !empty($cost) && !empty($date));
-    {
-        $query = "UPDATE matches SET name = '$stad', surname = '$teaml', date = '$teamll', phone = '$cost', email = '$date'";
+
+    $name= htmlspecialchars(addslashes($_POST['name']));
+    $surname= htmlspecialchars(addslashes($_POST['surname']));
+    $birth= htmlspecialchars(addslashes($_POST['birth']));
+    $phone = htmlspecialchars(addslashes($_POST['phone']));
+    $email = htmlspecialchars(addslashes($_POST['email']));
+    $password = htmlspecialchars(addslashes($_POST['password']));
+    $login = htmlspecialchars(addslashes($_POST['login']));
+    if(!empty($name) && !empty ($surname) && !empty($birth) && !empty($phone) && !empty($email)&& !empty($password)&& !empty($login))  {
+        $query = "UPDATE users SET name = '$name', surname = '$surname', birth = '$birth', phone = '$phone', email = '$email', password = '$password', login = '$login' WHERE id = '$id'";
+        mysqli_query($db, $query);
     }
 }
 ?>
@@ -76,32 +35,23 @@ function updateMatch():void {
     <title>Document</title>
 </head>
 <body>
-<form method="get" action="index.php">
-    <select name="stad">
-        <?php
-        foreach (getStad() as $stad) {
-            echo '<option value="' . $stad['id'] . '">' . $stad['name'] . '</option>';
-        }
-        ?>
+<?php
+require ('header.php');
+?>
+<main>
+<form method="post" action="">
+
     </select><br>
-    <select name="team1">
-        <?php
-        foreach (getTeams() as $team) {
-            echo '<option value="' . $team['id'] . '">' . $team['name'] . '</option>';
-        }
-        ?>
-    </select><br>
-    <select name="team2">
-        <?php
-        foreach (getTeams() as $team) {
-            echo '<option value="' . $team['id'] . '">' . $team['name'] . '</option>';
-        }
-        ?>
-    </select><br>
-    <input type="date" name="date" placeholder="Введите дату матча"><br>
-    <input type="text" name="cost" placeholder="Введите стоимость билета"><br>
+    <input type="text" name="name" placeholder="Введите новое имя"><br>
+    <input type="text" name="surname" placeholder="Введите новую фамилию"><br>
+    <input type="date" name="birth" placeholder="Введите дату рождения"><br>
+    <input type="text" name="phone" placeholder="Введите новый номер телефона"><br>
+    <input type="text" name="email" placeholder="Введите новую почту"><br>
+    <input type="password" name="password" placeholder="Введите новый пароль"><br>
+    <input type="text" name="login" placeholder="Введите новый логин"><br>
     <input type= "submit" value="Отправить"> <br>
 
 </form>
+</main>
 </body>
 </html>

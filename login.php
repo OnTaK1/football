@@ -13,17 +13,26 @@ session_start();
     <title>Document</title>
 </head>
 <body>
+<?php
+require ('header.php');
+?>
+
+
+
+
+<main>
 <h1>Добро пожаловать, <?= $_SESSION['login']; ?>
     <?= $_SESSION['type']; ?></h1>
-<form method="post" action="index.php">
+<form method="post" >
 
     <input type="text" name="login" placeholder="Введите логин">
     <input type="password" name="password" placeholder="Введите пароль"><br>
 
     <input type= "submit" value="Отправить">
 </form>
-
+</main>
 </body>
+<p>Ещё не зарегестрированы? Вы можете сделать это <a href="registration.php">здесь</a></p>
 </html>
 
 <?php
@@ -43,11 +52,13 @@ if (!empty($log) && !empty($pass)) {
     if (mysqli_num_rows($user) !== 0) {
         echo 'ВЫ ВОШЛИ';
         $_SESSION['login'] = $log;
+        $_SESSION['password'] = $pass;
         $_SESSION['type'] = $on;
+        $_SESSION['id'] = $ok['id'];
+        header('Location: /football/index.php');
     } else {
         echo 'Вы не вошли';
     }
-
 }
 
 ?>

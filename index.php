@@ -52,6 +52,7 @@ require ('header.php');
     $result = mysqli_query($db,$ghost);
     echo '<table border = "1" >'  . '<td>' . 'Команда 1'. '</td>' . '<td>' . 'Команда 2'. '</td>' . '<td>' . 'Дата матча'. '</td>'. '<td>' . 'Стадион'. '</td>'.'<td>'. ' Цена ' . '</td>'.'<td>'. ' Кол-во оставшихся мест ' . '</td>'.'<td>'. ' Купить ' . '</td>' .  '</tr>';
     for ($i = 0; $i<mysqli_num_rows($result); $i++) {
+
         $result_arr = mysqli_fetch_assoc($result);
         $none = $result_arr['team_id'];
         $teamone = "SELECT name FROM team where id = '$none' ";
@@ -65,12 +66,24 @@ require ('header.php');
         $stadium = "SELECT name FROM stadium where id = '$st' ";
         $stad = mysqli_query($db,$stadium);
         $stadium_arr = mysqli_fetch_assoc($stad);
-        echo   '<td>'  . $teamone_arr['name'] . '</td>' . '<td>'  . $teamtwo_arr['name'] . '</td>' . '<td>' . $result_arr['date'] . '</td>' . '<td>'  . $stadium_arr['name']  . '</td>' . '<td>'  . $result_arr['cost'] . '</td>'. '<td>'  . $result_arr['password'] . '</td>'. '<td>'  .  '<form> <input type="text" name="num" placeholder="Введите кол-во билетов"><br><input type= "submit" value="Купить"></form>' . '</td>'. '</tr>' ;
+        $data = $result_arr['date'];
+        $res = "SELECT COUNT(id) FROM ticket WHERE date =  '$data'";
+        $minus = mysqli_query( $db,$res );
+
+        $minus_arr = mysqli_fetch_assoc($minus);
+        var_dump($minus);
+        $sold_tickets = $minus_arr['count'];
+        $plus = $result_arr['place'];
+        $place = $plus - $sold_tickets;
+        echo   '<td>'  . $teamone_arr['name'] . '</td>' . '<td>'  . $teamtwo_arr['name'] . '</td>' . '<td>' . $result_arr['date'] . '</td>' . '<td>'  . $stadium_arr['name']  . '</td>' . '<td>'  . $result_arr['cost'] . '</td>'. '<td>'  .  $place . '</td>'. '<td>'  .  '<form action="buy_ticket.php?match_id= ' .   $result_arr['id']; ' . "> <input type="text" name="num" placeholder="Введите кол-во билетов"><br><input type= "submit" value="Купить"></form>' . '</td>'. '</tr>' ;
     }
 
     echo '</table>';
     $num = htmlspecialchars(addslashes($_POST['num']));
-    $query = "INSERT INTO `ticket` (`id`, `date`, `user_id`, `match_id`) VALUES ('$num', '$date') "
+    $day = date("d.m.Y",1356361196);
+    $id = $_SESSION['id'];
+    $match_id = "SELECT * FROM matches where  ";
+    $query = "INSERT INTO `ticket` ( `date`, `user_id`, `match_id`) VALUES ('$num', '$day', '$id', '') "
     ?>
 </body>
 </html>
